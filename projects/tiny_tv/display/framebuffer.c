@@ -57,6 +57,7 @@ static int framebuffer_getbuffer(pdisp_buffer pt_buffer)
 static int display_FlushRegion(pdisp_buffer ptbuffer, pdisp_region ptRegion)
 {
     int i,j;
+    int count = 0;
     int head_x, length_x;
     int end_y = ptRegion->iRegion_height + ptRegion->iRegion_y;
 
@@ -70,7 +71,7 @@ static int display_FlushRegion(pdisp_buffer ptbuffer, pdisp_region ptRegion)
         for (j = 0)
          memset(fb_base+i*line_size+head_x, *(ptbuffer->fb_base+i*line_size+head_x), length_x);
     }*/
-    int count = 0;
+
     while(count < (screen_size)){
         memset(fb_base+count, *(ptbuffer->fb_base+count), 1);
         count++;
