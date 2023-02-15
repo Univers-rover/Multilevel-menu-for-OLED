@@ -73,7 +73,8 @@ static int display_FlushRegion(pdisp_buffer ptbuffer, pdisp_region ptRegion)
     }*/
 
     while(count < (screen_size)){
-        memset(fb_base+count, *(ptbuffer->fb_base+count), 1);
+        if(strcmp(fb_base+count,ptbuffer->fb_base+count))
+            memset(fb_base+count, *(ptbuffer->fb_base+count), 1);
         count++;
     }
     //memset(fb_base, &ptbuffer->fb_base, screen_size);
