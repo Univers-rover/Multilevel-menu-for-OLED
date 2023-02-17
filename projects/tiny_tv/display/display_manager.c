@@ -140,7 +140,7 @@ void draw_font_bitmap(pdisp_buffer ptdisp_buffer, PFontBitMap ptFontBitMap, unsi
         for ( i = x, p = 0; i < x_max; i++, p++ )
         {
             if (i < 0 || j < 0 || i >= ptdisp_buffer->ixres || j >= ptdisp_buffer->iyres)
-            continue;
+            	continue;
 			if ( buffer[q * width + p] )//如果这个像素点的值为真，就将它改为要求的颜色
 			{
 				//printf("x = %d, y = %d\n", i, j);

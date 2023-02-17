@@ -56,8 +56,10 @@ static int framebuffer_getbuffer(pdisp_buffer pt_buffer)
 /* 将指定区域的buffer刷入显示设备 */
 static int display_FlushRegion(pdisp_buffer ptbuffer, pdisp_region ptRegion)
 {
-    int i,j;
     int count = 0;
+
+    /*
+    int i,j;
     int head_x, length_x;
     int end_y = ptRegion->iRegion_height + ptRegion->iRegion_y;
 
@@ -66,14 +68,15 @@ static int display_FlushRegion(pdisp_buffer ptbuffer, pdisp_region ptRegion)
 
     if((length_x + head_x) > 16)
         length_x--;
-    /*
+    
     for (i = ptRegion->iRegion_y; i < end_y; i++){
         for (j = 0)
          memset(fb_base+i*line_size+head_x, *(ptbuffer->fb_base+i*line_size+head_x), length_x);
-    }*/
+    }
+    */
 
     while(count < (screen_size)){
-        if(strcmp(fb_base+count,ptbuffer->fb_base+count))
+        if(strcmp((const char *)(fb_base+count),(const char *)(ptbuffer->fb_base+count)))
             memset(fb_base+count, *(ptbuffer->fb_base+count), 1);
         count++;
     }

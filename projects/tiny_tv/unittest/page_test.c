@@ -12,6 +12,7 @@
 #include <display.h>
 #include <font.h>
 #include <page.h>
+#include <input_my.h>
 
 int main(int argc, char **argv)
 {
@@ -32,9 +33,14 @@ int main(int argc, char **argv)
         return -1;
 	}
 
+	/* 输入系统初始化 */
+	input_init();
+	input_device_init();
+
     /* 页面系统初始化 */
 	Pages_register();
 
+	//printf("%s %s line %d\n", __FILE__, __FUNCTION__, __LINE__);
     /* 运行业务系统主页面 */
 	Page("main")->Run(NULL);
 

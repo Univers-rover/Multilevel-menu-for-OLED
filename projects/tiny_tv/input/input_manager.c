@@ -4,7 +4,7 @@
 #include <semaphore.h>
 #include <string.h>
 
-#include <input_elc.h>
+#include <input_my.h>
 
 static pinputdevice pinput_dev;/* 输入设备链表头 */
 /* 线程锁变量 */
@@ -109,16 +109,19 @@ int input_device_init(void)
 int GetInputEvent(pinputevent ptinputevent)
 {
     inputevent temp;
-
+    //printf("%s %s line %d\n", __FILE__, __FUNCTION__, __LINE__);
     pthread_mutex_lock(&g_tMutex);
     if (GetInputEventFromBuffer(&temp))//有数据，直接读到返回
     {
+        //printf("%s %s line %d\n", __FILE__, __FUNCTION__, __LINE__);
         *ptinputevent = temp;
         return 0;
     }
     else//没有数据，休眠等待
     {
-        pthread_cond_wait(&g_tConVar, &g_tMutex);//
+        //printf("%s %s line %d\n", __FILE__, __FUNCTION__, __LINE__);
+        pthread_cond_wait(&g_tConVar, &g_tMutex);
+
         if (GetInputEventFromBuffer(&temp))
         {
             *ptinputevent = temp;
@@ -133,11 +136,25 @@ int GetInputEvent(pinputevent ptinputevent)
     }
 }
 
+int GetInputEvent_unblock(pinputevent ptinputevent)
+{
+    inputevent temp;
+    //printf("%s %s line %d\n", __FILE__, __FUNCTION__, __LINE__);
+    //pthread_mutex_lock(&g_tMutex);
+    if (GetInputEventFromBuffer(&temp))//有数据，直接读到返回
+    {
+        *ptinputevent = temp;
+        return 0;
+    }
+    else//没有数据，休眠等待
+        return -1;
+}
+
 void input_init(void)
 {
     /* 向顶层app提供初始化函数注册各个输入设备 */
-    extern void touchinput_register(void);
-    touchinput_register();
+    extern void remoteinput_register(void);
+    remoteinput_register();
     
     extern void netinput_register(void);
     netinput_register();

@@ -29,5 +29,11 @@ void Pages_register(void)
 {
 	extern void Main_page_register(void);
 	Main_page_register();
+
+	extern void Main_list_page_register(void);
+	Main_list_page_register();
+
+	extern void Video_page_register(void);
+	Video_page_register();	
 }
 

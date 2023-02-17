@@ -141,7 +141,7 @@ void generate_list_screen_buffer(ppage_list ptpage_list)
     int list_size = ptpage_list->list_size;
     int size_before_screen = list_size * ptpage_list->top_list;
     disp_region select_region;
-
+    printf("%s %s line %d\n", __FILE__, __FUNCTION__, __LINE__);
     /* 从page_buffer中找到当前应该显示的部分并分配给临时的页面buffer */
     while (count<list_size*LIST_NUM)
     {
@@ -149,14 +149,14 @@ void generate_list_screen_buffer(ppage_list ptpage_list)
            *(ptpage_list->page_buffer.fb_base+size_before_screen+count), 1);
            count++;
     }
-    
+    printf("%s %s line %d\n", __FILE__, __FUNCTION__, __LINE__);
     /* 绘制选中框 */
     select_region.iRegion_x = 0;
     select_region.iRegion_y = (ptpage_list->list_pos - ptpage_list->top_list) * LIST_Height;
-    select_region.iRegion_width = ptpage_list->tlists[ptpage_list->list_pos].list_length;
+    select_region.iRegion_width = ptpage_list->tlists[ptpage_list->list_pos].list_length + LEFT_GAP*2;;
     select_region.iRegion_height = LIST_Height;
     draw_selected_list(ptpage_list, &select_region);
-
+    printf("%s %s line %d\n", __FILE__, __FUNCTION__, __LINE__);
     /* 绘制滚动条 */
     draw_rollbar(ptpage_list, 0);
 }
@@ -169,11 +169,12 @@ int roll_animation(ppage_list ptpage_list, int direction)
     int page_roll = 0;
     int start_pos = ptpage_list->list_pos;
     int end_pos = ptpage_list->list_pos + direction;
-    int sl_start_pos = (start_pos - ptpage_list->top_list) * LIST_Height - 1;//选中区域的y起始位置
+    int sl_start_pos = (start_pos - ptpage_list->top_list) * LIST_Height;//选中区域的y起始位置
     int sl_gap_height;
     int sl_gap_width,sl_start_width;//选中区域的起始和结束宽度
     int size_before_screen = 0;
     float offset;
+    int speed[16] = {1,2,4,7,10,10,10,10,10,10,10,10,7,4,2,1};
 
     disp_region select_region;
     disp_region screen_region;
@@ -186,7 +187,7 @@ int roll_animation(ppage_list ptpage_list, int direction)
     //判断是否需要滚动页面
     if(end_pos < ptpage_list->top_list)
         page_roll = -1;//往上翻页
-    else if((end_pos - ptpage_list->top_list) > LIST_NUM)
+    else if((end_pos - ptpage_list->top_list) >= LIST_NUM)
         page_roll = 1;//往下翻页
 
     //初始化选中区域参数
@@ -208,6 +209,7 @@ int roll_animation(ppage_list ptpage_list, int direction)
     screen_region.iRegion_width = ptpage_list->screen_buffer.ixres/2;
     screen_region.iRegion_height = ptpage_list->screen_buffer.iyres/2;
 
+    //printf("sl_start_pos = %d \n",sl_start_pos);
     for (i = 0; i < LIST_Height; i++)
     {
         offset = (float)(i+1)/16;
@@ -223,13 +225,14 @@ int roll_animation(ppage_list ptpage_list, int direction)
 
         //更新选中框
         select_region.iRegion_y = sl_start_pos + (int)sl_gap_height*offset;
-        select_region.iRegion_width = sl_start_width + (int)(offset*sl_gap_width);
+        select_region.iRegion_width = sl_start_width + (int)(offset*sl_gap_width) + LEFT_GAP*2;
         draw_selected_list(ptpage_list, &select_region);
+
 
         //更新滚动条
         draw_rollbar(ptpage_list, (float)offset*direction);
         FlushDisplayRegion(&ptpage_list->screen_buffer, &screen_region);
-        usleep(100000);
+        usleep(speed[i] * 1100);
     }
 
     //更新page_list的参数
