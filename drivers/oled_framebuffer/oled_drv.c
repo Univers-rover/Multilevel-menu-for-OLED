@@ -211,6 +211,7 @@ static void convert_fb_to_oled(void)
 	}
 }
 
+//利用内和线程每秒刷新一次
 static int oled_thread(void *data)
 {
     unsigned char y;
@@ -227,7 +228,7 @@ static int oled_thread(void *data)
 		}
 		
 		set_current_state(TASK_INTERRUPTIBLE);
-		schedule_timeout(HZ);
+		schedule_timeout(HZ/60);//延时多久刷新一次，HZ是1s
 
 		if (kthread_should_stop()) {
 			set_current_state(TASK_RUNNING);
@@ -277,7 +278,8 @@ static int oled_probe(struct spi_device *spi)
 
 	/* spi oled init */
 	oled_dc = gpiod_get(&spi->dev, "dc", GPIOD_OUT_HIGH);
-
+	
+	//dma_alloc_get可以确保申请的内存物理地址连续
 	data_buf = dma_alloc_wc(NULL, oled_fb_info->fix.smem_len, &phy_addr, GFP_KERNEL);
 	
 	oled_hardware_init();

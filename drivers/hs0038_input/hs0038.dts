@@ -1,0 +1,7 @@
+
+
+   dht11 {  /* for stm32mp157 */
+        compatible = "100ask,hs0038";
+        gpios = <&gpio4 19 GPIO_ACTIVE_HIGH>;
+    };
+
